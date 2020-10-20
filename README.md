@@ -221,3 +221,88 @@ if (typeof vnode.tag === 'function') {
     return currentComponent.base;
 }
 ```
+
+#### 类组件生命周期方法的实现
+- 使用component.base(是否含有JSX对象来判断)生命周期的调用
+    - componentWillMount
+    - componentWillReceiveProps
+    - componentWillUpdate
+    - componentDidUpdate
+    - componentDidMount
+- updateComponentProps 没有挂载任何东西的时候 执行组件初始化componentWillMount
+- renderComponent 有组件，将要更新的时候执行componentWillUpdate/componentDidUpdate, 执行JSX对象的替换parentNode.replaceChild
+```js
+class Foo extends React.Component { 
+    constructor(props) {
+        super(props);
+        this.state = {
+            num:1
+        }
+    }
+    componentWillMount() { 
+        console.log('componentWillMount组件将要挂载');
+    }
+    componentWillReceiveProps() {
+        console.log('componentWillReceiveProps组件将要更新Props');
+    }
+    componentWillUpdate() { 
+        console.log('componentWillUpdate组件将要更新');
+    }
+    componentDidUpdate() { 
+        console.log('componentDidUpdate组件更新完了');
+    }
+    componentDidMount() { 
+        console.log('componentDidMount组件挂载完成');
+    }
+    handleClick() {
+        this.setState({
+            num: this.state.num + 1
+        })
+    }
+    render() {
+        const {num} = this.state;
+        return (
+            <div className='foo-component'>
+                <div>Class Component</div>
+                <div>Num: {num} <button onClick={this.handleClick.bind(this)}>点击+1</button></div>
+            </div>
+        )
+    }
+}
+```
+```js
+// 说明没挂载任何东西 执行componentWillMount来初始化组件
+function updateComponentProps(component, props, _render) {
+    if (!component.base) {
+        if (component.componentWillMount) {
+            component.componentWillMount();
+        }
+        else if (component.componentWillReceiveProps) { 
+            component.componentWillReceiveProps();
+        }
+    }
+}
+// 说明已经挂载了组件，可以开始更新了  onClick触发更新
+function renderComponent(component, _render) { 
+    let base;
+    const componentJSXObject = component.render();
+    base = _render(componentJSXObject);
+    if (component.base) {
+        // 即将更新
+        if (component.componentWillUpdate) { 
+            component.componentWillUpdate();
+        }
+        if (component.componentDidUpdate) { 
+            component.componentDidUpdate();
+        }
+        // 更新视图JSX
+        if (component.base.parentNode) {
+            component.base.parentNode.replaceChild(base, component.base);
+        }
+    }
+    else if (component.componentDidMount) { 
+        component.componentDidMount();
+    }
+    component.base = base;
+}
+```
