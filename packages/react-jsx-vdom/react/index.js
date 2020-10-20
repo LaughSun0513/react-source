@@ -1,5 +1,6 @@
 /*
-var ele = React.createElement("div",
+var ele = React.createElement(
+    "div",
     {
         className: "active",
         title: "mytitle"
@@ -10,7 +11,7 @@ var ele = React.createElement("div",
 const React = {
     createElement
 }
-function createElement(tag, attrs, children) { 
+function createElement(tag, attrs, ...children) { 
     return {
         tag, attrs, children
     }
