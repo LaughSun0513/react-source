@@ -7,6 +7,7 @@ react源码学习
     - [第一步：实现React.createElement](#实现React.createElement)
     - [第二步：实现ReactDOM.render](#实现ReactDOM.render)
         - [区分函数组件还是类组件](#区分类组件/函数组件)
+        - [类组件生命周期方法的实现](#类组件生命周期方法的实现)
 
 # JSX和虚拟DOM
 
