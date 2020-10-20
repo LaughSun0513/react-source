@@ -31,10 +31,34 @@ export function renderComponent(component, _render) {
     let base;
     const componentJSXObject = component.render();
     base = _render(componentJSXObject);
-    return base;
+    if (component.base) { // 说明已经挂载了组件，可以开始更新了
+        // 即将更新
+        if (component.componentWillUpdate) { 
+            component.componentWillUpdate();
+        }
+        if (component.componentDidUpdate) { 
+            component.componentDidUpdate();
+        }
+        // 更新视图JSX
+        if (component.base.parentNode) {
+            component.base.parentNode.replaceChild(base, component.base);
+        }
+    }
+    else if (component.componentDidMount) { 
+        component.componentDidMount();
+    }
+    component.base = base;
 }
-// 函数组件更新props
-export function updateComponentProps(component, props, _render){ 
+// 更新props
+export function updateComponentProps(component, props, _render) {
+    if (!component.base) { // 说明没挂载任何东西
+        if (component.componentWillMount) {
+            component.componentWillMount();
+        }
+        else if (component.componentWillReceiveProps) { 
+            component.componentWillReceiveProps();
+        }
+    }
     component.props = props;
     renderComponent(component, _render);
 }

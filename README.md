@@ -159,7 +159,6 @@ function setAttributes(dom, key, value) {
             - 转换为类组件
             - 添加render方法
             - 调用render方法生成JSX对象 并挂载到当前的组件实例上 component.base
-            - 
 
 ```js
 // 类组件 -- 有prototype 和 render方法

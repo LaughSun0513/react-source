@@ -4,16 +4,20 @@ import {
     updateComponentProps
 } from './createComponents';
 
-function render(vnode, container) {
+export function render(vnode, container) {
     return container.appendChild(_render(vnode));
 }
 // 返回JSX节点对象
-function _render(vnode) {
+export function _render(vnode) {
     // 1
     if (vnode === undefined || vnode === null || typeof vnode === 'boolean' || vnode === '') { 
         throw new Error('vnode传的数据类型不对');
     }
+
     // 2
+    if (typeof vnode === 'number') { 
+        vnode = String(vnode);
+    }
     if (typeof vnode === 'string') {
         return document.createTextNode(vnode); // 创建文本节点
     }
@@ -22,7 +26,7 @@ function _render(vnode) {
     if (typeof vnode.tag === 'function') {
         const currentComponent = createComponent(tag, attrs);
         updateComponentProps(currentComponent, attrs, _render);
-        currentComponent.base = renderComponent(currentComponent, _render);
+        renderComponent(currentComponent, _render);
         return currentComponent.base;
     }
     // 4
@@ -57,8 +61,9 @@ function setAttributes(dom, key, value) {
     }
     if (/on\w+/.test(key)) { 
         key = key.toLowerCase();
+        dom[key] = value || '';
     }
-    if (key === 'style') {
+    else if (key === 'style') {
         if (typeof key === 'string' || !value) {
             dom.style.cssText = value || '';
         }
@@ -73,7 +78,8 @@ function setAttributes(dom, key, value) {
                 }
             }
         }
-    } else { 
+    }
+    else { 
         if (key in dom) { 
             dom[key] = value || '';
         }
@@ -88,4 +94,3 @@ function setAttributes(dom, key, value) {
     }
     
 }
-export default render;

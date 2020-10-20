@@ -8,8 +8,10 @@ var ele = React.createElement(
     "hello,",
     React.createElement("span", null, "react-jsx"));
 */
+import Component from "./component"
 const React = {
-    createElement
+    createElement,
+    Component
 }
 function createElement(tag, attrs, ...children) { 
     return {
